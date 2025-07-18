@@ -8,5 +8,6 @@
 
 import requests
 params = {"who": "Dad"}
-r = requests.get("http://localhost:8000/hi", params=params)
+# r = requests.get("http://localhost:8000/hi", params=params)
+r = requests.post("http://localhost:8000/hi", json={"who":"Dad"})
 print(r.json())
