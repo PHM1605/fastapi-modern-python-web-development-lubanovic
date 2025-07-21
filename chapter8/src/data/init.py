@@ -13,12 +13,11 @@ def get_db(name:str|None=None, reset:bool=False):
         conn = None 
     if not name:
         name = os.getenv('CRYPTID_SQLITE_DB')
-        topdir = Path(__file__).resolve().parents[2] # 'chapter8' folder
+        topdir = Path(__file__).resolve().parents[1] # 'src' folder
         db_dir = topdir/"db"
         db_name = "cryptid.db"
         db_path = str(db_dir/db_name)
-        name = os.getenv("CRYPTID_SQLITE_DB", db_path) # chapter8/db/cryptid.db
-        print(name)
+        name = os.getenv("CRYPTID_SQLITE_DB", db_path) # src/db/cryptid.db
 
     conn = connect(name, check_same_thread=False)
     curs = conn.cursor()
