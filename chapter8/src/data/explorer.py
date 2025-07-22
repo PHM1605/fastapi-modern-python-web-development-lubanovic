@@ -1,5 +1,6 @@
-from .init import curs, conn
+from .init import curs, conn, IntegrityError
 from model.explorer import Explorer 
+from error import Missing, Duplicate
 
 curs.execute("""
   create table if not exists explorer (
@@ -16,13 +17,15 @@ def model_to_dict(explorer: Explorer) -> dict:
   return explorer.dict() if explorer else None 
 
 #  http localhost:8000/explorer/Beau%20Buffete
-def get_one(name:str)->Explorer:
-  
+def get_one(name:str)->Explorer:  
   qry = "select * from explorer where name=:name"
   params = {"name": name}
   curs.execute(qry, params)
   row = curs.fetchone()
-  return row_to_model(row) if row else None
+  if row:
+    return row_to_model(row)
+  else: 
+    raise Missing(msg=f"Explorer {name} not found")
 
 # http -v localhost:8000/explorer
 def get_all() -> list[Explorer]:
@@ -36,7 +39,10 @@ def create(explorer: Explorer) -> Explorer:
     insert into explorer(name, country, description) 
     values (:name, :country, :description)"""
   params = model_to_dict(explorer)
-  _ = curs.execute(qry, params)
+  try:
+    curs.execute(qry, params)
+  except IntegrityError:
+    raise Duplicate(msg=f"Explorer {explorer.name} already exists")
   conn.commit()
   return get_one(explorer.name)
 
@@ -47,14 +53,20 @@ def modify(name: str, explorer: Explorer) -> Explorer:
     where name=:name_orig"""
   params = model_to_dict(explorer)
   params["name_orig"] = explorer.name 
-  _ = curs.execute(qry, params)
+  curs.execute(qry, params)
   conn.commit()
-  explorer2 = get_one(explorer.name)
-  return explorer2 
+  if curs.rowcount == 1:
+    return get_one(explorer.name)
+  else:
+    raise Missing(msg=f"Explorer {name} not found") 
 
-def delete(explorer:Explorer) -> bool:
+def delete(name:str) -> bool:
+  if not name: return False 
   qry = "delete from explorer where name=:name"
-  params = {"name": explorer.name}
+  params = {"name": name}
   res = curs.execute(qry, params)
+  if curs.rowcount != 1:
+    raise Missing(msg=f"Explorer {name} not found")
+
   conn.commit()
   return bool(res)
