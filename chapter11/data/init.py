@@ -3,7 +3,7 @@ from pathlib import Path
 from sqlite3 import connect, Connection, Cursor, IntegrityError
 
 conn: Connection|None = None 
-curs = Cursor|None = None 
+curs: Cursor|None = None 
 
 def get_db(name:str|None=None, reset:bool=False):
   global conn, curs 

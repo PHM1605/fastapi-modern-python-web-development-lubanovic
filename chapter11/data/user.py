@@ -27,7 +27,7 @@ def get_one(name:str) -> User:
   params = {"name": name}
   curs.execute(qry, params)
   row = curs.fetchone()
-  if row 
+  if row:
     return row_to_model(row)
   else:
     raise Missing(msg=f"User {name} not found")

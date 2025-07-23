@@ -1,5 +1,5 @@
 import os 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from model.user import User 
 
@@ -34,7 +34,7 @@ async def create_access_token(form_data:OAuth2PasswordRequestForm=Depends()):
   )
   return {"access_token": access_token, "token_type":"bearer"}
 
-@app.get("/token")
+@router.get("/token")
 def get_access_token(token:str=Depends(oauth2_dep))->dict:
   return {"token": token}
 
