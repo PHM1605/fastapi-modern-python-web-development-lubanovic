@@ -11,40 +11,37 @@ router = APIRouter(prefix="/creature")
 
 @router.get("/")
 def get_all()->list[Creature]:
-    return service.get_all()
+	return service.get_all()
 
 @router.get("/{name}")
 def get_one(name) -> Creature:
-    try:
-        return service.get_one(name)
-    except Missing as exc:
-        raise HTTPException(status_code=404, detail=exc.msg)
+	try:
+		return service.get_one(name)
+	except Missing as exc:
+		raise HTTPException(status_code=404, detail=exc.msg)
 
 @router.post("/")
 def create(creature: Creature) -> Creature:
-    try:
-        return service.create(creature)
-    except Duplicate as exc:
-        raise HTTPException(status_code=409, detail=exc.msg)
+	try:
+		return service.create(creature)
+	except Duplicate as exc:
+		raise HTTPException(status_code=409, detail=exc.msg)
 
 @router.patch("/")
-def modify(creature: Creature) -> Creature:
-    try:
-        return service.modify(creature)
-    except Missing as exc:
-        raise HTTPException(status_code=404, detail=exc.msg)
+def modify(name:str, creature: Creature) -> Creature:
+	try:
+		return service.modify(name, creature)
+	except Missing as exc:
+		raise HTTPException(status_code=404, detail=exc.msg)
 
 @router.put("/")
-def replace(creature: Creature) -> Creature:
-    try: 
-        return service.replace(creature)
-    except Missing as exc:
-        raise HTTPException(status_code=404, detail=exc.msg)
-
+def replace(name:str, creature: Creature) -> Creature:
+	return service.replace(name, creature)
+	
 @router.delete("/{name}")
 def delete(name: str):
-    try:
-        return service.delete(name)
-    except Missing as exc:
-        raise HTTPException(status_code=404, detail=exc.msg)
+	try:
+		return service.delete(name)
+	except Missing as exc:
+		raise HTTPException(status_code=404, detail=exc.msg)
         
