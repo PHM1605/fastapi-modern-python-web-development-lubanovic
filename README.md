@@ -6,3 +6,4 @@ Authentication/authorization is an important concept but he shows snippets here 
 
 "Admin" table should be doing this and that, "Permission", "Role", "RoleTable" so and so. But zero code, only 1-2 sentences each. 
 
+"Production" chapter only links you to other books and links to other documentations (?!?)
