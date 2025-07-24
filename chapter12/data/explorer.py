@@ -52,7 +52,7 @@ def modify(name: str, explorer: Explorer) -> Explorer:
     set country=:country, name=:name, description=:description
     where name=:name_orig"""
   params = model_to_dict(explorer)
-  params["name_orig"] = explorer.name 
+  params["name_orig"] = name 
   curs.execute(qry, params)
   conn.commit()
   if curs.rowcount == 1:
@@ -60,13 +60,13 @@ def modify(name: str, explorer: Explorer) -> Explorer:
   else:
     raise Missing(msg=f"Explorer {name} not found") 
 
-def delete(name:str) -> bool:
-  if not name: return False 
+def delete(name:str):
+  if not name: 
+    raise Missing(msg="Empty name")
   qry = "delete from explorer where name=:name"
   params = {"name": name}
   res = curs.execute(qry, params)
   if curs.rowcount != 1:
     raise Missing(msg=f"Explorer {name} not found")
-
   conn.commit()
   return bool(res)

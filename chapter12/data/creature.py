@@ -29,7 +29,7 @@ def get_one(name: str)->Creature:
 	else:
 		raise Missing(msg=f"Creature {name} not found")
 
-def get_all(name:str)->list[Creature]:
+def get_all()->list[Creature]:
 	qry = "select * from creature"
 	curs.execute(qry)
 	rows = list(curs.fetchall())
@@ -41,12 +41,12 @@ def create(creature: Creature):
 	params = model_to_dict(creature)
 	try:
 		curs.execute(qry, params)
+		conn.commit()
+		return get_one(creature.name)
 	except IntegrityError:
 		raise Duplicate(msg=f"Creature {creature.name} already exists")
-	conn.commit()
-	return get_one(creature.name)
-
-def modify(creature: Creature):
+	
+def modify(name:str, creature: Creature):
 	qry = """
 		update creature
 		set country=:country,
@@ -57,22 +57,26 @@ def modify(creature: Creature):
 		where name=:name_orig
 	"""
 	params = model_to_dict(creature)
-	params["name_orig"] = creature.name 
+	params["name_orig"] = name 
 	curs.execute(qry, params)
 	if curs.rowcount == 1:
-		return get_one(creature.name)
 		conn.commit()
+		return get_one(creature.name)
 	else:
-		raise Missing(msg=f"Creature {creature.name} not found")
+		raise Missing(msg=f"Creature {name} not found")
 
-def replace(creature: Creature):
-	return creature 
+def replace(name:str, creature: Creature):
+	try:
+		get_one(name)
+		return modify(name, creature)
+	except Missing:
+		return create(creature)
 
-def delete(creature: Creature):
+def delete(name: str):
 	qry = "delete from creature where name=:name"
-	params = {"name": creature.name}
+	params = {"name": name}
 	res = curs.execute(qry, params)
 	if curs.rowcount != 1:
-		raise Missing(msg=f"Creature {creature.name} not found")
+		raise Missing(msg=f"Creature {name} not found")
 	conn.commit()
     

@@ -1,7 +1,7 @@
-from pydantic import BaseModel 
+from pydantic import BaseModel, constr
 
 class Creature(BaseModel):
-    name: str 
+    name: constr(min_length=1) 
     country: str 
     area: str 
     description: str 

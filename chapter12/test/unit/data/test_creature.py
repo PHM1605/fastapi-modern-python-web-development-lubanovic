@@ -30,7 +30,7 @@ def test_get_one_missing():
     _ = creature.get_one("boxturtle")
 
 def test_modify(sample):
-  sample.area = "Sesame Street"
+  sample.country = "JP" # japan
   resp = creature.modify(sample)
   assert resp==sample 
 

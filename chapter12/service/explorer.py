@@ -10,12 +10,12 @@ def get_one(name:str) -> Explorer|None:
 def create(explorer: Explorer)->Explorer:
     return data.create(explorer)
 
-def replace(id, explorer:Explorer)->Explorer:
-    return data.replace(id, explorer)
+def replace(name:str, explorer:Explorer)->Explorer:
+    return data.replace(name, explorer)
 
-def modify(id, explorer:Explorer)->Explorer:
-    return data.modify(id, explorer)
+def modify(name:str, explorer:Explorer)->Explorer:
+    return data.modify(name, explorer)
 
-def delete(id, explorer:Explorer)->bool:
+def delete(name:str)->bool:
     return data.delete(id)
     

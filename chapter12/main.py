@@ -4,3 +4,5 @@ from web import explorer, creature
 app = FastAPI()
 app.include_router(explorer.router)
 app.include_router(creature.router)
+
+## To test: schemathesis run http://localhost:8000/openapi.json

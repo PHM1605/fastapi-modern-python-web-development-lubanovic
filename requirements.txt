@@ -3,3 +3,5 @@ fastapi
 httpie
 requests
 httpx
+hypothesis
+schemathesis

@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 class Explorer(BaseModel):
-    name: str 
+    name: constr(min_length=1) 
     country: str 
     description: str 
     

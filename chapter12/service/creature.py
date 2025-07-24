@@ -20,6 +20,6 @@ def replace(name:str, creature: Creature) -> Creature:
 def modify(name, creature: Creature) -> Creature:
     return data.modify(name, creature)
 
-def delete(name) -> None:
+def delete(name:str):
     return data.delete(name)
 
