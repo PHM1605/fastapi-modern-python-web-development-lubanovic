@@ -5,3 +5,5 @@ requests
 httpx
 hypothesis
 schemathesis
+transformers==4.51.3
+tokenizers==0.21.2
