@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <style>
+      html * {
+        font-size: 20pt;
+        font-family: Courier, sans-serif;
+      }
+      body {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      input[type=text] {
+        width: 30px;
+        margin: 1px;
+        padding: 0px;
+        border: 1px solid black;
+      }
+      .H { background-color: #00EE00; } /* hit character (green) */
+      .C { background-color: #EEEE00; } /* close character (yellow) (correct char but at wrong position) */
+      .M { background-color: #EEEEEE; } /* miss character (gray) */
+    </style>
+  </head>
+  <body>
+    <script>
+      // only after we press the "submit" button at least once 
+      function show_score(guess, score) {
+        var table = document.getElementById("guesses");
+        var row = table.insertRow(row);
+        for (var i=0; i<guess.length; i++) {
+          var cell = row.insertCell(i);
+          cell.innerHTML = guess[i]; // display the guessing character
+          cell.classList.add(score[i]); // for coloring that char 
+        }
+
+        // comparing the guessing word with solution being stored in the <input-hidden>
+        var word = document.getElementById("word").value;
+        if (guess.toLowerCase() == word.toLowerCase()) {
+          console.log("matched");
+          document.getElementById("status").innerHTML = "&#x1F600"; // smiling emoji
+        }
+      }
+
+      async function post_guess() {
+        // solution word
+        var word = document.getElementById("word").value;
+        // guessing word
+        var vals = document.getElementsByName("guess");
+        // scan the guessing word
+        var guess = "";
+        for (var i=0; i<vals.length; i++) {
+          guess += vals[i].value;
+        }
+        // send both the <solution-word> and <guessing-word> to the server
+        var req = new Request("http://localhost:8000/game", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({"guess": guess, "word": word})
+        })
+        fetch(req)
+        .then((resp)=>resp.json())
+        .then((score)=>{
+          show_score(guess, score);
+          // clear the guessing input cells
+          for (var i=0; i<vals.length; i++) {
+            vals[i].value = "";
+          }
+        })
+      }
+    </script>
+    <h2>Cryptonamicon</h2>
+
+    <!-- this table will gradually add more ROWS (with coloring), the more word current Player guesses -->
+    <table id="guesses"></table>
+
+    <!-- a smile emoji if guess the whole world -->
+    <span id="status"></span>
+
+    <hr>
+
+    <!-- the submit section, this section won't display anything, only for getting input -->
+    <div>
+      <!-- guess word being typed in; each input is a character -->
+      {% for letter in word %}
+        <input type="text" name="guess">
+      {% endfor %}
+      <!-- solution word, with value='bigfoot' BUT never shown on screen -->
+      <input type="hidden" id="word" value="{{word}}" />
+      <br><br>
+      <!-- submit button -->
+      <input type="submit" onclick="post_guess()"/>
+    </div>
+  </body>
+</html>
